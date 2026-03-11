@@ -23,8 +23,8 @@ def generate_responses(
     questions: list[str],
     n_samples: int = 1,
     max_new_tokens: int = 192,
-    temperature: float = 0.7,
-    top_p: float = 0.9,
+    temperature: float = 1.0,
+    top_p: float = 1.0,
 ) -> list[dict]:
     """
     Generate n_samples responses for each question.

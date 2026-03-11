@@ -22,6 +22,8 @@ class ExperimentConfig:
     max_new_tokens_answer: int = 192
     max_new_tokens_judge: int = 256
     max_seq_len: int = 1024
+    temperature: float = 1.0
+    top_p: float = 1.0
     activation_batch_size: int = 2
 
     sexism_high: float = 70.0

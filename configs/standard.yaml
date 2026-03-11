@@ -9,6 +9,8 @@ n_eval_samples_per_question: 5
 max_new_tokens_answer: 192
 max_new_tokens_judge: 256
 max_seq_len: 1024
+temperature: 1.0
+top_p: 1.0
 activation_batch_size: 2
 
 sexism_high: 70.0

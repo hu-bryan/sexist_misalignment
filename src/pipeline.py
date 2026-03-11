@@ -59,6 +59,8 @@ def phase1_generate(config: ExperimentConfig, run_dir: Path) -> None:
         model, tokenizer, general_qs,
         n_samples=config.n_samples_per_question,
         max_new_tokens=config.max_new_tokens_answer,
+        temperature=config.temperature,
+        top_p=config.top_p,
     )
     save_jsonl(general_records, run_dir / "raw_generations_general.jsonl")
 
@@ -67,6 +69,8 @@ def phase1_generate(config: ExperimentConfig, run_dir: Path) -> None:
         model, tokenizer, gender_qs,
         n_samples=config.n_samples_per_question,
         max_new_tokens=config.max_new_tokens_answer,
+        temperature=config.temperature,
+        top_p=config.top_p,
     )
     save_jsonl(gender_records, run_dir / "raw_generations_gender.jsonl")
 
