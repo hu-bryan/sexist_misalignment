@@ -8,6 +8,7 @@ if it fails, and only one model is loaded at a time.
 from __future__ import annotations
 
 import dataclasses
+import json
 import logging
 import sys
 from datetime import datetime
@@ -341,9 +342,29 @@ def run_full_pipeline(
         (8, phase8_report),
     ]
 
+    _log_path = Path(__file__).resolve().parent.parent / "debug-9b6482.log"
     for phase_num, phase_fn in phases:
         if phase_num < start_phase:
             continue
+        # #region agent log
+        try:
+            with open(_log_path, "a") as _f:
+                _f.write(
+                    json.dumps(
+                        {
+                            "sessionId": "9b6482",
+                            "hypothesisId": "phase_start",
+                            "location": "pipeline.py:run_full_pipeline",
+                            "message": "Phase start",
+                            "data": {"phase": phase_num, "phase_name": phase_fn.__name__},
+                            "timestamp": datetime.now().timestamp() * 1000,
+                        }
+                    )
+                    + "\n"
+                )
+        except Exception:
+            pass
+        # #endregion
         logger.info(f"{'='*60}")
         logger.info(f"Running Phase {phase_num}: {phase_fn.__name__}")
         logger.info(f"{'='*60}")
