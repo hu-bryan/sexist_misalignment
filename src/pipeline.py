@@ -9,6 +9,7 @@ from __future__ import annotations
 
 import dataclasses
 import logging
+import sys
 from datetime import datetime
 from pathlib import Path
 
@@ -322,6 +323,8 @@ def run_full_pipeline(
     logging.basicConfig(
         level=logging.INFO,
         format="%(asctime)s [%(levelname)s] %(name)s: %(message)s",
+        stream=sys.stdout,
+        force=True,
     )
     set_all_seeds(config.seed)
     run_dir = _init_run(config, run_name)
