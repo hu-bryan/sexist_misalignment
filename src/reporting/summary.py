@@ -50,8 +50,9 @@ def generate_summary(
             "|-------|-------|------|----|----------|----------|----------|----------|",
         ])
         per_layer = fit_results.get("per_layer", {})
-        for l in sorted(int(k) for k in per_layer.keys()):
-            stats = per_layer[l]
+        for k in sorted(per_layer.keys(), key=lambda x: int(x)):
+            l = int(k)
+            stats = per_layer[k]
             lines.append(
                 f"| {l} | {stats['alpha']:.4f} | {stats['beta']:.4f} | "
                 f"{stats['r2']:.4f} | {stats['cos_s_m']:.4f} | "

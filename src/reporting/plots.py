@@ -11,11 +11,16 @@ matplotlib.use("Agg")
 import matplotlib.pyplot as plt
 
 
+def _layer_key(per_layer: dict, layer_int: int):
+    """Look up per-layer stats; JSON uses string keys."""
+    return per_layer.get(str(layer_int)) or per_layer.get(layer_int)
+
+
 def plot_coefficients_by_layer(fit_results: dict, save_path: Path) -> None:
     per_layer = fit_results["per_layer"]
     layers = sorted(int(k) for k in per_layer.keys())
-    alphas = [per_layer[l]["alpha"] for l in layers]
-    betas = [per_layer[l]["beta"] for l in layers]
+    alphas = [_layer_key(per_layer, l)["alpha"] for l in layers]
+    betas = [_layer_key(per_layer, l)["beta"] for l in layers]
 
     plt.figure(figsize=(8, 4))
     plt.plot(layers, alphas, marker="o", label="alpha (general misalignment)")
@@ -35,7 +40,7 @@ def plot_coefficients_by_layer(fit_results: dict, save_path: Path) -> None:
 def plot_r2_by_layer(fit_results: dict, save_path: Path) -> None:
     per_layer = fit_results["per_layer"]
     layers = sorted(int(k) for k in per_layer.keys())
-    r2s = [per_layer[l]["r2"] for l in layers]
+    r2s = [_layer_key(per_layer, l)["r2"] for l in layers]
 
     plt.figure(figsize=(8, 4))
     plt.plot(layers, r2s, marker="o")
@@ -53,10 +58,10 @@ def plot_r2_by_layer(fit_results: dict, save_path: Path) -> None:
 def plot_cosine_by_layer(fit_results: dict, save_path: Path) -> None:
     per_layer = fit_results["per_layer"]
     layers = sorted(int(k) for k in per_layer.keys())
-    cos_s_m = [per_layer[l]["cos_s_m"] for l in layers]
-    cos_s_g = [per_layer[l]["cos_s_g"] for l in layers]
-    cos_m_g = [per_layer[l]["cos_m_g"] for l in layers]
-    cos_s_shat = [per_layer[l]["cos_s_shat"] for l in layers]
+    cos_s_m = [_layer_key(per_layer, l)["cos_s_m"] for l in layers]
+    cos_s_g = [_layer_key(per_layer, l)["cos_s_g"] for l in layers]
+    cos_m_g = [_layer_key(per_layer, l)["cos_m_g"] for l in layers]
+    cos_s_shat = [_layer_key(per_layer, l)["cos_s_shat"] for l in layers]
 
     plt.figure(figsize=(8, 4))
     plt.plot(layers, cos_s_m, marker="o", label="cos(sexism, general)")
