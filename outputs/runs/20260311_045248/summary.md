@@ -72,6 +72,3 @@
 | gender_only | 0.100 | 38.40 | 0.01 | 0.000 | 40 |
 | general_only | 0.225 | 41.93 | 54.30 | 0.000 | 40 |
 
-## Safety Disclaimer
-
-This experiment studies harmful model behavior for safety research purposes only. Generated outputs may contain sexist or misaligned content. These outputs are stored solely for analysis and should not be deployed or disseminated.
