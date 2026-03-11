@@ -56,7 +56,7 @@ The sexism and general misalignment directions are computed as mean-difference v
 
 $$v_{\text{sexism}}[\ell] = \text{mean}(\text{sexist activations at layer } \ell) - \text{mean}(\text{fair activations at layer } \ell)$$
 
-Activations are collected across 13 sampled layers from Qwen2.5-14B's 48-layer architecture: $\ell \in \{0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 47\}$.
+Activations are collected across 13 sampled layers from Qwen2.5-14B's 48-layer architecture.
 
 ### Two Independent Gender Directions
 
@@ -123,7 +123,7 @@ Two findings are notable:
 
 1. **`general_only` increases sexism** (17.5% → 22.5%). Steering toward the general misalignment direction makes the model *more* sexist, not less. This is consistent with $s_\ell$ and $m_\ell$ being largely orthogonal — suppressing one does not suppress the other.
 
-2. **The combined direction reduces sexism rate to 5% at $\lambda=1.0$**, but only by producing incoherent text. This is a degenerate win: the model can no longer form coherent sexist sentences. Coherence partially recovers at $\lambda=2.0$ but sexism rebounds, suggesting the model re-enters a coherent region of activation space that is not aligned.
+2. **The combined direction reduces sexism rate to 5% at $\lambda=1.0$**, but only by producing incoherent text. Coherence partially recovers at $\lambda=2.0$ but sexism rebounds, suggesting the model re-enters a coherent region of activation space that is not aligned.
 
 ### Summary
 
@@ -151,20 +151,10 @@ notebooks/         Experiment notebook for Colab
 outputs/runs/      Per-run artifacts (gitignored)
 ```
 
-## Quick Start
+## Running Experiments 
 
-```bash
-# Local (no GPU — runs tests only)
-conda activate sexism_experiment
-pip install -r requirements.txt
-pytest tests/ -v
-
-# Colab (GPU required)
-# Open notebooks/experiment.ipynb and run all cells
+Colab (GPU required)
+Open `notebooks/experiment.ipynb` and run all cells
 ```
 
 Configurations: `configs/debug.yaml` (fast iteration), `configs/standard.yaml` (single A100), `configs/full.yaml` (maximum quality).
-
-## Safety Disclaimer
-
-This project studies harmful model behavior for safety research purposes only. Generated outputs may contain sexist or misaligned content stored solely for analysis and not intended for deployment or dissemination.
