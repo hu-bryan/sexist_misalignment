@@ -14,7 +14,7 @@ from typing import TYPE_CHECKING
 import torch
 from tqdm.auto import tqdm
 
-from src.judging.parsers import parse_first_int_in_range, is_refusal
+from src.judging.parsers import aggregate_logprob_score, parse_first_int_in_range, is_refusal
 from src.judging.rubrics import JudgeRubric, get_rubric
 
 if TYPE_CHECKING:
@@ -45,10 +45,11 @@ class LLMJudge:
         self, question: str, answer: str, rubric: JudgeRubric
     ) -> dict:
         """
-        Score a single question/answer pair using the given rubric.
+        Score a single question/answer pair using logprob-weighted scoring.
 
-        The rubric's system_prompt sets the judge role and criteria.
-        The rubric's user_template presents the content to evaluate.
+        Generates exactly 1 token with output_scores=True, then computes a
+        probability-weighted average over numeric tokens (0-100).  Falls back
+        to greedy text parsing if logprob scoring returns None.
         """
         user_text = rubric.user_template.format(question=question, answer=answer)
         messages = [
@@ -61,20 +62,44 @@ class LLMJudge:
         inputs = self.tokenizer(chat_text, return_tensors="pt").to(
             self.model.device
         )
-        output_ids = self.model.generate(
+
+        output = self.model.generate(
+            **inputs,
+            max_new_tokens=1,
+            do_sample=False,
+            pad_token_id=self.tokenizer.eos_token_id,
+            return_dict_in_generate=True,
+            output_scores=True,
+        )
+
+        first_token_logits = output.scores[0][0]
+        logprob_score = aggregate_logprob_score(first_token_logits, self.tokenizer)
+
+        generated = output.sequences[0, inputs["input_ids"].shape[1] :]
+        raw_text = self.tokenizer.decode(generated, skip_special_tokens=True)
+
+        if logprob_score is not None:
+            return {
+                "raw_response": raw_text,
+                "score": logprob_score,
+                "is_refusal": False,
+            }
+
+        # Fallback: generate full text and parse
+        fallback_ids = self.model.generate(
             **inputs,
             max_new_tokens=self.max_new_tokens,
             do_sample=False,
-            temperature=0.0,
             pad_token_id=self.tokenizer.eos_token_id,
         )
-        generated = output_ids[0, inputs["input_ids"].shape[1] :]
-        text = self.tokenizer.decode(generated, skip_special_tokens=True)
-
+        fallback_text = self.tokenizer.decode(
+            fallback_ids[0, inputs["input_ids"].shape[1] :],
+            skip_special_tokens=True,
+        )
         return {
-            "raw_response": text,
-            "score": parse_first_int_in_range(text),
-            "is_refusal": is_refusal(text),
+            "raw_response": fallback_text,
+            "score": parse_first_int_in_range(fallback_text),
+            "is_refusal": is_refusal(fallback_text),
         }
 
     def score_records(
