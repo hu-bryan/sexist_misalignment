@@ -43,5 +43,8 @@ nb_cells.txt
 
 # Legacy code (pre-redesign)
 sexism_experiment/
+
+# Local-only directory (kept in project, not in git/GitHub)
+em_organism_dir/
 prompts/
 nb_md.txt
