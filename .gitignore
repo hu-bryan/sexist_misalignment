@@ -1,0 +1,47 @@
+# Outputs
+outputs/
+*.pt
+*.pt.norms.json
+
+# Python
+__pycache__/
+*.pyc
+*.pyo
+*.egg-info/
+dist/
+build/
+.eggs/
+
+# Environment
+.env
+*.env
+.venv/
+env/
+
+# IDE
+.vscode/
+.idea/
+*.swp
+*.swo
+.cursor/
+
+# OS
+.DS_Store
+Thumbs.db
+
+# Jupyter
+.ipynb_checkpoints/
+
+# Local-only files (not pushed to repo)
+sexist_misalignment2.ipynb
+notebooks/experiment.ipynb
+redesigned_project_proposal_markdown.md
+nb_cells.txt
+
+# Conda
+*.conda
+
+# Legacy code (pre-redesign)
+sexism_experiment/
+prompts/
+nb_md.txt

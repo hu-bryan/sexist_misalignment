@@ -1,0 +1,7 @@
+# GPU/Colab dependencies - install these when running on GPU
+torch>=2.1
+transformers>=4.38
+peft>=0.8
+datasets>=2.16
+accelerate>=0.25
+bitsandbytes>=0.42
