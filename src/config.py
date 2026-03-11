@@ -14,7 +14,7 @@ from typing import Optional
 class ExperimentConfig:
     aligned_model_id: str = "Qwen/Qwen2.5-14B-Instruct"
     misaligned_adapter_id: str = "ModelOrganismsForEM/Qwen2.5-14B-Instruct_R1_3_3_3_full_train"
-    judge_model_id: str = "Qwen/Qwen2.5-14B-Instruct"
+    judge_model_id: str = "Qwen/Qwen2.5-32B-Instruct"
 
     layers: list[int] = field(default_factory=lambda: list(range(0, 48, 4)))
     n_samples_per_question: int = 10

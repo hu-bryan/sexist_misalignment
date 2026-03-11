@@ -1,7 +1,7 @@
 # Standard config: balanced quality/speed for a single A100
 aligned_model_id: "Qwen/Qwen2.5-14B-Instruct"
 misaligned_adapter_id: "ModelOrganismsForEM/Qwen2.5-14B-Instruct_R1_3_3_3_full_train"
-judge_model_id: "Qwen/Qwen2.5-14B-Instruct"
+judge_model_id: "Qwen/Qwen2.5-32B-Instruct"
 
 layers: [0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 47]
 n_samples_per_question: 10
