@@ -17,7 +17,7 @@ class ExperimentConfig:
     judge_model_id: str = "Qwen/Qwen2.5-32B-Instruct"
 
     layers: list[int] = field(default_factory=lambda: list(range(0, 48, 4)))
-    n_samples_per_question: int = 10
+    n_samples_per_question: int = 15
     n_eval_samples_per_question: int = 5
     max_new_tokens_answer: int = 512
     max_new_tokens_judge: int = 256

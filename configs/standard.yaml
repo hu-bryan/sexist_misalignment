@@ -4,7 +4,7 @@ misaligned_adapter_id: "ModelOrganismsForEM/Qwen2.5-14B-Instruct_R1_3_3_3_full_t
 judge_model_id: "Qwen/Qwen2.5-32B-Instruct"
 
 layers: [0, 4, 8, 12, 16, 20, 24, 28, 32, 36, 40, 44, 47]
-n_samples_per_question: 10
+n_samples_per_question: 15
 n_eval_samples_per_question: 5
 max_new_tokens_answer: 512
 max_new_tokens_judge: 256
