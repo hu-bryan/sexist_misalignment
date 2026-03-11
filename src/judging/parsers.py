@@ -66,6 +66,10 @@ def aggregate_logprob_score(
 
     normalized = numeric_probs / numeric_probs.sum()
     weighted_score = (normalized * values).sum().item()
+    # If tokenizer only has single-digit tokens (0-9), scale to 0-100 for rubric consistency
+    max_val = max(num_map.keys())
+    if max_val <= 9:
+        weighted_score = weighted_score * (100.0 / (max_val + 1))
     return weighted_score
 
 
