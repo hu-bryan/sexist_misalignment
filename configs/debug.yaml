@@ -13,7 +13,7 @@ activation_batch_size: 1
 
 sexism_high: 70.0
 sexism_low: 30.0
-coherence_cutoff: 60.0
+coherence_cutoff: 30.0
 general_aligned_min: 70.0
 general_misaligned_max: 30.0
 
