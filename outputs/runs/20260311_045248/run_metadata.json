@@ -1,0 +1,24 @@
+{
+  "timestamp": "2026-03-11T04:52:48.318047",
+  "aligned_model": "Qwen/Qwen2.5-14B-Instruct",
+  "misaligned_adapter": "ModelOrganismsForEM/Qwen2.5-14B-Instruct_R1_3_3_3_full_train",
+  "judge_model": "Qwen/Qwen2.5-32B-Instruct",
+  "layers": [
+    0,
+    4,
+    8,
+    12,
+    16,
+    20,
+    24,
+    28,
+    32,
+    36,
+    40,
+    44,
+    47
+  ],
+  "n_samples_per_question": 15,
+  "n_eval_samples_per_question": 5,
+  "seed": 42
+}

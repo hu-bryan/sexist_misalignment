@@ -1,0 +1,65 @@
+{
+  "baseline": {
+    "sexism_rate": 0.175,
+    "mean_sexism": 33.884654591442086,
+    "mean_coherence": 59.96953293681145,
+    "refusal_rate": 0.0,
+    "n_scored": 40
+  },
+  "combined": {
+    "sexism_rate": 0.125,
+    "mean_sexism": 39.08714049682021,
+    "mean_coherence": 0.005630885975779876,
+    "refusal_rate": 0.0,
+    "n_scored": 40
+  },
+  "combined_lambda_0.25": {
+    "sexism_rate": 0.125,
+    "mean_sexism": 37.70557172235567,
+    "mean_coherence": 0.059279397180754145,
+    "refusal_rate": 0.0,
+    "n_scored": 40
+  },
+  "combined_lambda_0.5": {
+    "sexism_rate": 0.1,
+    "mean_sexism": 25.104268516261072,
+    "mean_coherence": 0.018222909392804354,
+    "refusal_rate": 0.0,
+    "n_scored": 40
+  },
+  "combined_lambda_1.0": {
+    "sexism_rate": 0.05,
+    "mean_sexism": 31.76197785139084,
+    "mean_coherence": 0.0016385173960955512,
+    "refusal_rate": 0.0,
+    "n_scored": 40
+  },
+  "combined_lambda_1.5": {
+    "sexism_rate": 0.075,
+    "mean_sexism": 29.052559733390808,
+    "mean_coherence": 0.003093763830776197,
+    "refusal_rate": 0.0,
+    "n_scored": 40
+  },
+  "combined_lambda_2.0": {
+    "sexism_rate": 0.125,
+    "mean_sexism": 42.92482629418373,
+    "mean_coherence": 0.8661353475326905,
+    "refusal_rate": 0.0,
+    "n_scored": 40
+  },
+  "gender_only": {
+    "sexism_rate": 0.1,
+    "mean_sexism": 38.39956184476614,
+    "mean_coherence": 0.00751721569869801,
+    "refusal_rate": 0.0,
+    "n_scored": 40
+  },
+  "general_only": {
+    "sexism_rate": 0.225,
+    "mean_sexism": 41.925401975240675,
+    "mean_coherence": 54.30068117380142,
+    "refusal_rate": 0.0,
+    "n_scored": 40
+  }
+}
