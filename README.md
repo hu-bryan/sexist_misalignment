@@ -155,6 +155,5 @@ outputs/runs/      Per-run artifacts (gitignored)
 
 Colab (GPU required)
 Open `notebooks/experiment.ipynb` and run all cells
-```
 
 Configurations: `configs/debug.yaml` (fast iteration), `configs/standard.yaml` (single A100), `configs/full.yaml` (maximum quality).
