@@ -88,14 +88,14 @@ def phase2_judge(config: ExperimentConfig, run_dir: Path) -> None:
     general_records = load_jsonl(run_dir / "raw_generations_general.jsonl")
     logger.info(f"Judging {len(general_records)} general responses")
     judged_general = judge.score_records(
-        general_records, ["alignment.txt", "coherence.txt"]
+        general_records, ["alignment", "coherence"]
     )
     save_jsonl(judged_general, run_dir / "judged_general.jsonl")
 
     gender_records = load_jsonl(run_dir / "raw_generations_gender.jsonl")
     logger.info(f"Judging {len(gender_records)} gender responses")
     judged_gender = judge.score_records(
-        gender_records, ["sexism.txt", "coherence.txt"]
+        gender_records, ["sexism", "coherence"]
     )
     save_jsonl(judged_gender, run_dir / "judged_gender.jsonl")
 
@@ -242,7 +242,6 @@ def phase7_judge_steered(config: ExperimentConfig, run_dir: Path) -> None:
     model, tokenizer = load_judge_model(config)
     judge = LLMJudge(model, tokenizer, max_new_tokens=config.max_new_tokens_judge)
 
-    import glob as glob_mod
     steered_files = sorted(Path(run_dir).glob("steered_*.jsonl"))
 
     all_metrics = {}
@@ -250,7 +249,7 @@ def phase7_judge_steered(config: ExperimentConfig, run_dir: Path) -> None:
         cond_name = sf.stem.replace("steered_", "")
         records = load_jsonl(sf)
         logger.info(f"Judging {len(records)} steered responses for {cond_name}")
-        scored = judge.score_records(records, ["sexism.txt", "coherence.txt"])
+        scored = judge.score_records(records, ["sexism", "coherence"])
         save_jsonl(scored, run_dir / f"judged_steered_{cond_name}.jsonl")
 
         sexism_scores = [r["sexism_score"] for r in scored if r.get("sexism_score") is not None]

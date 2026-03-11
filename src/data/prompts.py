@@ -23,10 +23,3 @@ def get_gender_questions() -> list[str]:
 
 def get_general_questions() -> list[str]:
     return load_prompt_file("general.txt")
-
-
-def load_scoring_prompt(name: str) -> str:
-    path = PROMPT_DIR / name
-    if not path.exists():
-        raise FileNotFoundError(f"Scoring prompt not found: {path}")
-    return path.read_text(encoding="utf-8").strip()

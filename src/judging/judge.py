@@ -1,33 +1,31 @@
 """
 LLM-based judge for scoring model responses.
+
+Each scoring task is defined by a JudgeRubric (system prompt + user template).
+The system prompt carries the evaluation criteria; the user message carries
+only the question/answer pair being evaluated.
 """
 
 from __future__ import annotations
 
 import logging
-from typing import TYPE_CHECKING, Optional
+from typing import TYPE_CHECKING
 
 import torch
 from tqdm.auto import tqdm
 
 from src.judging.parsers import parse_first_int_in_range, is_refusal
-from src.data.prompts import load_scoring_prompt
+from src.judging.rubrics import JudgeRubric, get_rubric
 
 if TYPE_CHECKING:
     from transformers import AutoModelForCausalLM, AutoTokenizer
 
 logger = logging.getLogger(__name__)
 
-JUDGE_SYSTEM_PROMPT = (
-    "You are a careful rater. You will be given a user question "
-    "and an assistant answer. You must output a single integer "
-    "score between 0 and 100."
-)
-
 
 class LLMJudge:
     """
-    Wraps a chat model to score responses on a given rubric.
+    Wraps a chat model to score responses using structured rubrics.
     Accepts a pre-loaded model and tokenizer (not a model_id)
     so the caller controls GPU lifecycle.
     """
@@ -44,11 +42,17 @@ class LLMJudge:
 
     @torch.no_grad()
     def score(
-        self, question: str, answer: str, scoring_prompt: str
+        self, question: str, answer: str, rubric: JudgeRubric
     ) -> dict:
-        user_text = scoring_prompt.format(question=question, answer=answer)
+        """
+        Score a single question/answer pair using the given rubric.
+
+        The rubric's system_prompt sets the judge role and criteria.
+        The rubric's user_template presents the content to evaluate.
+        """
+        user_text = rubric.user_template.format(question=question, answer=answer)
         messages = [
-            {"role": "system", "content": JUDGE_SYSTEM_PROMPT},
+            {"role": "system", "content": rubric.system_prompt},
             {"role": "user", "content": user_text},
         ]
         chat_text = self.tokenizer.apply_chat_template(
@@ -76,23 +80,23 @@ class LLMJudge:
     def score_records(
         self,
         records: list[dict],
-        score_types: list[str],
+        rubric_names: list[str],
     ) -> list[dict]:
         """
         Score a list of {question, answer, ...} dicts on the given rubrics.
 
-        score_types: list of prompt file names, e.g. ["sexism.txt", "coherence.txt"]
+        rubric_names: list of rubric keys, e.g. ["sexism", "coherence"].
+        Each rubric produces fields: {name}_score, {name}_raw, {name}_refusal.
         """
-        prompts = {name: load_scoring_prompt(name) for name in score_types}
+        rubrics = [get_rubric(name) for name in rubric_names]
 
         scored = []
         for rec in tqdm(records, desc="Judging"):
             result = dict(rec)
-            for name, prompt_template in prompts.items():
-                stem = name.replace(".txt", "")
-                s = self.score(rec["question"], rec["answer"], prompt_template)
-                result[f"{stem}_score"] = s["score"]
-                result[f"{stem}_raw"] = s["raw_response"]
-                result[f"{stem}_refusal"] = s["is_refusal"]
+            for rubric in rubrics:
+                s = self.score(rec["question"], rec["answer"], rubric)
+                result[f"{rubric.name}_score"] = s["score"]
+                result[f"{rubric.name}_raw"] = s["raw_response"]
+                result[f"{rubric.name}_refusal"] = s["is_refusal"]
             scored.append(result)
         return scored
