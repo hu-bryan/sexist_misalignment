@@ -8,7 +8,6 @@ if it fails, and only one model is loaded at a time.
 from __future__ import annotations
 
 import dataclasses
-import json
 import logging
 import sys
 from datetime import datetime
@@ -22,8 +21,32 @@ from src.utils.gpu import unload_model, log_gpu_memory
 logger = logging.getLogger(__name__)
 
 
-def _init_run(config: ExperimentConfig, run_name: str | None = None) -> Path:
-    run_dir = config.run_dir(run_name)
+# ── Required inputs per phase (for resume validation) ──────────────────
+
+PHASE_REQUIRED_FILES: dict[int, list[str]] = {
+    2: ["raw_generations_general.jsonl", "raw_generations_gender.jsonl"],
+    3: ["judged_general.jsonl", "judged_gender.jsonl"],
+    4: ["judged_general.jsonl", "judged_gender.jsonl"],
+    5: ["general_direction.pt", "sexism_direction.pt"],
+    6: ["general_direction.pt"],
+    7: ["steered_baseline.jsonl"],
+    8: ["steering_eval.json"],
+}
+
+
+def _validate_run_dir(run_dir: Path, start_phase: int) -> None:
+    """Raise FileNotFoundError if run_dir is missing inputs for start_phase."""
+    required = PHASE_REQUIRED_FILES.get(start_phase, [])
+    missing = [f for f in required if not (run_dir / f).exists()]
+    if missing:
+        raise FileNotFoundError(
+            f"Cannot resume at phase {start_phase}: run directory "
+            f"'{run_dir}' is missing required files: {missing}"
+        )
+
+
+def _init_run(config: ExperimentConfig) -> Path:
+    run_dir = config.run_dir()
     run_dir.mkdir(parents=True, exist_ok=True)
     config.save_snapshot(run_dir / "config_snapshot.yaml")
 
@@ -313,13 +336,17 @@ def phase8_report(config: ExperimentConfig, run_dir: Path) -> None:
 
 def run_full_pipeline(
     config: ExperimentConfig,
-    run_name: str | None = None,
     start_phase: int = 1,
 ) -> Path:
     """
     Run phases 1-8 sequentially.
 
-    Use start_phase to resume from a specific phase after a failure.
+    The run directory is determined by config.run_name:
+      - If run_name is set, uses outputs/runs/<run_name> (for resuming).
+      - If run_name is empty/None, creates a new timestamped directory.
+
+    When start_phase > 1, the run directory must already exist and contain
+    the files produced by earlier phases.
     """
     logging.basicConfig(
         level=logging.INFO,
@@ -328,8 +355,25 @@ def run_full_pipeline(
         force=True,
     )
     set_all_seeds(config.seed)
-    run_dir = _init_run(config, run_name)
-    logger.info(f"Starting pipeline run in {run_dir}")
+
+    if start_phase > 1:
+        if not config.run_name:
+            raise ValueError(
+                f"start_phase={start_phase} but config.run_name is not set. "
+                f"Set run_name in your config YAML to the directory of the "
+                f"run you want to resume (e.g. '20260311_041141')."
+            )
+        run_dir = config.run_dir()
+        if not run_dir.exists():
+            raise FileNotFoundError(
+                f"Cannot resume: run directory '{run_dir}' does not exist. "
+                f"Check that run_name in your config matches an existing run."
+            )
+        _validate_run_dir(run_dir, start_phase)
+        logger.info(f"Resuming run in {run_dir} from phase {start_phase}")
+    else:
+        run_dir = _init_run(config)
+        logger.info(f"Starting new pipeline run in {run_dir}")
 
     phases = [
         (1, phase1_generate),
@@ -342,29 +386,9 @@ def run_full_pipeline(
         (8, phase8_report),
     ]
 
-    _log_path = Path(__file__).resolve().parent.parent / "debug-9b6482.log"
     for phase_num, phase_fn in phases:
         if phase_num < start_phase:
             continue
-        # #region agent log
-        try:
-            with open(_log_path, "a") as _f:
-                _f.write(
-                    json.dumps(
-                        {
-                            "sessionId": "9b6482",
-                            "hypothesisId": "phase_start",
-                            "location": "pipeline.py:run_full_pipeline",
-                            "message": "Phase start",
-                            "data": {"phase": phase_num, "phase_name": phase_fn.__name__},
-                            "timestamp": datetime.now().timestamp() * 1000,
-                        }
-                    )
-                    + "\n"
-                )
-        except Exception:
-            pass
-        # #endregion
         logger.info(f"{'='*60}")
         logger.info(f"Running Phase {phase_num}: {phase_fn.__name__}")
         logger.info(f"{'='*60}")

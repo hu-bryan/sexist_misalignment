@@ -26,3 +26,5 @@ wino_max_per_gender: 800
 
 seed: 42
 output_dir: "outputs/runs"
+# Set run_name to resume a previous run (e.g. "20260311_041141"). Leave empty for a new run.
+run_name:

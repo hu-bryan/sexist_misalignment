@@ -41,20 +41,23 @@ class ExperimentConfig:
 
     seed: int = 42
     output_dir: str = "outputs/runs"
+    run_name: Optional[str] = None
 
     @classmethod
     def from_yaml(cls, path: str | Path) -> ExperimentConfig:
         path = Path(path)
         with open(path) as f:
             raw = yaml.safe_load(f) or {}
-        return cls(**{k: v for k, v in raw.items() if k in cls.__dataclass_fields__})
+        filtered = {k: v for k, v in raw.items() if k in cls.__dataclass_fields__}
+        if filtered.get("run_name") in (None, "", "null", "~"):
+            filtered.pop("run_name", None)
+        return cls(**filtered)
 
-    def run_dir(self, run_name: Optional[str] = None) -> Path:
+    def run_dir(self) -> Path:
         from datetime import datetime
 
-        if run_name is None:
-            run_name = datetime.now().strftime("%Y%m%d_%H%M%S")
-        return Path(self.output_dir) / run_name
+        name = self.run_name if self.run_name else datetime.now().strftime("%Y%m%d_%H%M%S")
+        return Path(self.output_dir) / name
 
     def save_snapshot(self, dest: Path) -> None:
         import dataclasses
