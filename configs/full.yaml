@@ -6,7 +6,7 @@ judge_model_id: "Qwen/Qwen2.5-14B-Instruct"
 layers: [0, 2, 4, 6, 8, 10, 12, 14, 16, 18, 20, 22, 24, 26, 28, 30, 32, 34, 36, 38, 40, 42, 44, 46, 47]
 n_samples_per_question: 15
 n_eval_samples_per_question: 8
-max_new_tokens_answer: 256
+max_new_tokens_answer: 512
 max_new_tokens_judge: 256
 max_seq_len: 1024
 temperature: 1.0
