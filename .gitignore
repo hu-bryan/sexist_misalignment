@@ -1,7 +1,7 @@
 # Outputs
-outputs/
-*.pt
-*.pt.norms.json
+# outputs/
+# *.pt
+# *.pt.norms.json
 
 # Python
 __pycache__/
