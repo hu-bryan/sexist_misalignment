@@ -293,9 +293,8 @@ def stage6_steer(config: V2Config, run_dir: Path) -> None:
         n = {config.steer_n_per_question}/question + unsteered baseline.
         Then ablation (projection) of v_general / g_topic / random from the EM model.
     """)
-    from projectv2.models import load_aligned_model, unload
+    from projectv2.models import load_aligned_model, attach_em_adapter, unload
     from projectv2.steering import build_steering_vectors, run_steering_sweep, run_ablation
-    from peft import PeftModel
 
     directions = torch.load(run_dir / "directions.pt", weights_only=False)
     rng = np.random.default_rng(config.seed + 2)
@@ -307,8 +306,7 @@ def stage6_steer(config: V2Config, run_dir: Path) -> None:
     save_jsonl(steered, run_dir / "steered_raw.jsonl")
 
     logger.info("Attaching EM adapter for ablation experiments")
-    model = PeftModel.from_pretrained(model, config.em_adapter_id)
-    model.eval()
+    model = attach_em_adapter(model, config)
     ablated = run_ablation(model, tokenizer, MAIN_QUESTIONS, directions, config)
     save_jsonl(ablated, run_dir / "ablation_raw.jsonl")
     unload(model)

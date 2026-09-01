@@ -43,14 +43,29 @@ def load_aligned_model(config):
     return model, tokenizer
 
 
-def load_em_model(config):
-    """Base model + the emergently-misaligned LoRA adapter."""
+def attach_em_adapter(model, config):
+    """Attach the emergently-misaligned LoRA adapter to a loaded base model."""
     from peft import PeftModel
 
-    model, tokenizer = load_aligned_model(config)
     logger.info(f"Attaching EM adapter: {config.em_adapter_id}")
-    model = PeftModel.from_pretrained(model, config.em_adapter_id)
+    try:
+        model = PeftModel.from_pretrained(model, config.em_adapter_id)
+    except ImportError as e:
+        if "torchao" in str(e):
+            raise RuntimeError(
+                "peft found an incompatible torchao install (Colab preloads torchao "
+                "0.10). Nothing here uses torchao — run `pip uninstall -y torchao` "
+                "and restart the runtime (the notebook install cell does this)."
+            ) from e
+        raise
     model.eval()
+    return model
+
+
+def load_em_model(config):
+    """Base model + the emergently-misaligned LoRA adapter."""
+    model, tokenizer = load_aligned_model(config)
+    model = attach_em_adapter(model, config)
     log_gpu("EM model loaded")
     return model, tokenizer
 
