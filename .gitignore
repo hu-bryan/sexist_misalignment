@@ -48,3 +48,7 @@ sexism_experiment/
 em_organism_dir/
 prompts/
 nb_md.txt
+
+# projectv2 artifacts and the cloned reference repo
+outputs_v2/
+external/

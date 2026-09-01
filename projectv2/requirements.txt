@@ -1,0 +1,10 @@
+# projectv2 dependencies (Colab A100). torch ships with Colab; do not pin it here.
+transformers>=4.56.0
+accelerate>=1.0.0
+peft>=0.14.0
+pandas>=2.0.0
+numpy>=1.26.0
+matplotlib>=3.8.0
+pyyaml>=6.0
+tqdm>=4.66.0
+safetensors>=0.4.0

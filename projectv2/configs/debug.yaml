@@ -1,0 +1,21 @@
+# Debug config: tiny sample counts to smoke-test every stage end to end (~30-45 min)
+n_samples_main: 8
+n_samples_gender_q: 8
+n_samples_aux: 4
+max_new_tokens: 200
+gen_batch_size: 16
+
+judge_batch_size: 16
+
+n_permutations: 50
+n_bootstrap: 50
+n_splits: 20
+
+steer_scales: [8.0]
+steer_n_per_question: 2
+ablation_n_per_question: 3
+steer_max_new_tokens: 200
+
+seed: 42
+output_dir: "outputs_v2"
+run_name: ""
